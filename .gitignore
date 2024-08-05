@@ -1,0 +1,42 @@
+# Environment and configuration files
+.env
+
+# PHPStorm project files
+.idea/
+*.iml
+
+# VSCode project files
+.vscode/
+
+# Composer dependencies
+/vendor/
+
+# Node dependencies (if applicable)
+node_modules/
+
+# Build directories
+builds/
+
+# Writable directories
+writable/
+
+# Test result files
+.phpunit.result.cache
+
+# Log files
+*.log
+
+# Cache files
+cache/
+
+# Backup files
+*.bak
+*.backup
+
+# IDE specific files
+nbproject/
+.DS_Store
+
+# Ignored files
+public/uploads/
+public/storage/
