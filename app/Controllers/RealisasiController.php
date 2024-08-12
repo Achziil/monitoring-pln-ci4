@@ -2,8 +2,8 @@
 
 namespace App\Controllers;
 
-use App\Models\UserModel;
 use CodeIgniter\Controller;
+use App\Models\UserModel;
 use App\Models\RealisasiModel;
 
 class RealisasiController extends Controller
@@ -41,6 +41,7 @@ class RealisasiController extends Controller
             'pagetitle' => 'Monitoring Administrasi',
             'busaOptions' => $busaWithNickname,
             'userBusa' => $userBusa, // Tambahkan nilai busa ke data yang dikirim ke view
+            'listTahun' => $this->realisasiModel->getListOfYear(),
         ];
 
         echo view('realisasi/index', $data);
@@ -187,6 +188,13 @@ class RealisasiController extends Controller
 
         $months = $this->realisasiModel->getAvailableMonths($busa);
 
+        $monthsByYear = [];
+
+        foreach ($months as $month) {
+            $year = substr($month['bulan'], 0, 4);
+            $monthsByYear[$year][] = $month['bulan'];
+        }
+
         if ($selectedMonth === null) {
             $selectedMonth = isset($months[0]['bulan']) ? $months[0]['bulan'] : date('Y-m');
         }
@@ -207,6 +215,7 @@ class RealisasiController extends Controller
             'months' => $months,
             'selectedMonth' => $selectedMonth,
             'realisasi_data' => $trendData,
+            'monthsByYear' => $monthsByYear,
         ];
 
         echo view('realisasi/presentase', $data);

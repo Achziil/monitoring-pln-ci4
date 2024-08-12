@@ -25,6 +25,40 @@
                                     <?php endforeach; ?>
                                 </select>
                             </div>
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="busa" class="form-label">Tahun</label>
+                                        <select name="tahun" id="tahunFilter" class="form-control">
+                                            <option value="" disabled selected>-- pilih tahun --</option>
+                                            <?php foreach ($listTahun as $option) : ?>
+                                                <option value="<?= $option->tahun ?>"><?= $option->tahun ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="busa" class="form-label">Bulan</label>
+                                        <select name="bulan" id="bulanFilter" class="form-control">
+                                            <option value="" disabled selected>-- pilih bulan --</option>
+                                            <option value="01">Januari</option>
+                                            <option value="02">Februari</option>
+                                            <option value="03">Maret</option>
+                                            <option value="04">April</option>
+                                            <option value="05">Mei</option>
+                                            <option value="06">Juni</option>
+                                            <option value="07">Juli</option>
+                                            <option value="08">Agustus</option>
+                                            <option value="09">September</option>
+                                            <option value="10">Oktober</option>
+                                            <option value="11">November</option>
+                                            <option value="12">Desember</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-2 text-md-end mt-3">
                             <!-- <button id="createTargetOptimasiButton" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createTargetOptimasiModal">Add Target Optimasi</button> -->
@@ -315,25 +349,25 @@ function resetForm(formId) {
 
         // Fungsi fetchtotal
         function fetchTotalPerKategori(busa) {
-        $.ajax({
-            url: totalPerKategoriUrl,
-            method: 'POST',
-            data: { busa: busa}, // Gunakan busa dari filter atau userBusa
-            success: function(response) {
-                var data = response.data;
-                var tbody = $('#totalPerKategoriTable tbody');
-                tbody.empty();
+            $.ajax({
+                url: totalPerKategoriUrl,
+                method: 'POST',
+                data: { busa: busa}, // Gunakan busa dari filter atau userBusa
+                success: function(response) {
+                    var data = response.data;
+                    var tbody = $('#totalPerKategoriTable tbody');
+                    tbody.empty();
 
-                $.each(data, function(index, item) {
-                    var row = '<tr>';
-                    row += '<td>' + item.gl_long_text + '</td>';
-                    row += '<td>' + formatIDR(item.total_target_amount) + '</td>';
-                    row += '</tr>';
-                    tbody.append(row);
-                });
-            }
-        });
-    }
+                    $.each(data, function(index, item) {
+                        var row = '<tr>';
+                        row += '<td>' + item.gl_long_text + '</td>';
+                        row += '<td>' + formatIDR(item.total_target_amount) + '</td>';
+                        row += '</tr>';
+                        tbody.append(row);
+                    });
+                }
+            });
+        }
 
         var table = $('#datatableQuery').DataTable({
             pageLength : 12,
@@ -350,6 +384,8 @@ function resetForm(formId) {
                         fetchTotalPerKategori(selectedBusa);
                     });
                     d.busaFilter = $('#busaFilter').val();
+                    d.tahun = $('#tahunFilter').val();
+                    d.bulan = $('#bulanFilter').val();
                 <?php endif; ?>
             }
             },
@@ -381,9 +417,25 @@ function resetForm(formId) {
 
         <?php if ($userLevel === 'admin' || $userLevel === 'wilayah') : ?>
             $('#busaFilter').on('change', function() {
-                var selectedBusa = $(this).val();
-                table.ajax.url(targetOptimasiUrl + '?busaFilter=' + selectedBusa).load();
+                var selectedBusa = $('#busaFilter').val();
+                var selectedTahun = $("#tahunFilter").val();
+                var selectedBulan = $("#bulanFilter").val();
+                table.ajax.url(targetOptimasiUrl + '?busaFilter=' + selectedBusa + '&tahun=' + selectedTahun + '&bulan=' + selectedBulan).load();
                 fetchTotalPerKategori(selectedBusa);
+            });
+
+            $('#tahunFilter').on('change', function() {
+                var selectedBusa = $('#busaFilter').val();
+                var selectedTahun = $("#tahunFilter").val();
+                var selectedBulan = $("#bulanFilter").val();
+                table.ajax.url(targetOptimasiUrl + '?busaFilter=' + $('#busaFilter').val() + '&tahun=' + selectedTahun + '&bulan=' + selectedBulan).load();
+            });
+
+            $('#bulanFilter').on('change', function() {
+                var selectedBusa = $('#busaFilter').val();
+                var selectedTahun = $("#tahunFilter").val();
+                var selectedBulan = $("#bulanFilter").val();
+                table.ajax.url(targetOptimasiUrl + '?busaFilter=' + $('#busaFilter').val() + '&tahun=' + selectedTahun + '&bulan=' + selectedBulan).load();
             });
         <?php endif; ?>
 

@@ -3,11 +3,11 @@
 namespace App\Controllers;
 
 use CodeIgniter\Controller;
-use App\Models\CategoryModel;
-use App\Models\RealisasiModel;
 use App\Models\SumberDataModel;
-use App\Models\MonitoringModel;
+use App\Models\RealisasiModel;
 use App\Models\PaguTersisaModel;
+use App\Models\MonitoringModel;
+use App\Models\CategoryModel;
 
 class SumberDataController extends Controller
 
@@ -114,6 +114,9 @@ class SumberDataController extends Controller
             $file->move(WRITEPATH . 'uploads', $newName);
 
             $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+            $reader->setReadDataOnly(true);
+            $reader->setReadEmptyCells(false);
+
             $spreadsheet = $reader->load(WRITEPATH . 'uploads/' . $newName);
             $sheet = $spreadsheet->getActiveSheet();
 
@@ -237,7 +240,7 @@ class SumberDataController extends Controller
                 }
 
                 if (!empty($realisasiBatchDataAll)) {
-                    $this->realisasiModel->insertBatch($realisasiBatchDataAll);
+                    $this->realisasiModel->insertBatch($realisasiBatchDataAll, batchSize: 1000);
                 }
 
                 $this->monitoringModel->refreshMonitoringData();

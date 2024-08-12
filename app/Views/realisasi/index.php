@@ -25,6 +25,41 @@
                                     <?php endforeach; ?>
                                 </select>
                             </div>
+
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="busa" class="form-label">Tahun</label>
+                                        <select name="tahun" id="tahunFilter" class="form-control">
+                                            <option value="" disabled selected>-- pilih tahun --</option>
+                                            <?php foreach ($listTahun as $option) : ?>
+                                                <option value="<?= $option->tahun ?>"><?= $option->tahun ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="busa" class="form-label">Bulan</label>
+                                        <select name="bulan" id="bulanFilter" class="form-control">
+                                            <option value="" disabled selected>-- pilih bulan --</option>
+                                            <option value="01">Januari</option>
+                                            <option value="02">Februari</option>
+                                            <option value="03">Maret</option>
+                                            <option value="04">April</option>
+                                            <option value="05">Mei</option>
+                                            <option value="06">Juni</option>
+                                            <option value="07">Juli</option>
+                                            <option value="08">Agustus</option>
+                                            <option value="09">September</option>
+                                            <option value="10">Oktober</option>
+                                            <option value="11">November</option>
+                                            <option value="12">Desember</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                             <div class="col-md-2 text-end">
                                 <button id="deleteAllButton" class="btn btn-danger mb-3">Delete All Data</button>
@@ -91,7 +126,7 @@
             $.ajax({
                 url: totalPerKategoriUrl,
                 method: 'POST',
-                data: { busaFilter: busa }, // Gunakan busa dari filter atau userBusa
+                data: { busaFilter: busa}, // Gunakan busa dari filter atau userBusa
                 success: function(response) {
                     var data = response.data;
                     var tbody = $('#totalPerKategoriTable tbody');
@@ -118,6 +153,8 @@
                 data: function(d) {
                     var selectedBusa = $('#busaFilter').val();
                     d.busaFilter = selectedBusa;
+                    d.tahun = $('#tahunFilter').val();
+                    d.bulan = $('#bulanFilter').val();
                 }
             },
             "columns": [{
@@ -150,6 +187,16 @@
         $('#busaFilter').on('change', function() {
             table.ajax.reload();
             fetchTotalPerKategori($(this).val()); // Reload Total Realisasi per Kategori when Unit filter changes
+        });
+
+        // Event listener untuk filter tahun
+        $('#tahunFilter').on('change', function() {
+            table.ajax.reload();
+        });
+
+        // Event listener untuk filter bulan
+        $('#bulanFilter').on('change', function() {
+            table.ajax.reload();
         });
 
         // Format numbers to IDR format

@@ -45,6 +45,16 @@ class RealisasiModel extends Model
             $builder->groupEnd(); // Akhiri grup kondisi OR
         }
 
+        if(isset($_POST['bulan']) && !empty($_POST['bulan'])) {
+            $bulan = $_POST['bulan'];
+            $builder->where('MONTH(realisasi.bulan)', $bulan);
+        }
+
+        if(isset($_POST['tahun']) && !empty($_POST['tahun'])) {
+            $tahun = $_POST['tahun'];
+            $builder->where('YEAR(realisasi.bulan)', $tahun);
+        }
+
         // Urutkan data berdasarkan kolom yang dipilih dari datatable
         if (isset($_POST['order'])) {
             $order = $_POST['order'][0]['column'];
@@ -56,6 +66,14 @@ class RealisasiModel extends Model
         $builder->limit($_POST['length'], $_POST['start']);
         $query = $builder->get();
         return $query->getResult();
+    }
+
+    public function getListOfYear() {
+        $builder = $this->db->table($this->table)
+            ->select('YEAR(bulan) AS tahun', false)
+            ->groupBy('YEAR(bulan)')
+            ->orderBy('tahun', 'DESC');
+        return $builder->get()->getResult();
     }
 
     public function countFiltered($busa = null)
@@ -79,6 +97,17 @@ class RealisasiModel extends Model
             $builder->orLike('realisasi.bulan', $search);
             $builder->orLike('realisasi.amount_local_curr', $search);
             $builder->groupEnd(); // Akhiri grup kondisi OR
+        }
+
+
+        if(isset($_POST['bulan']) && !empty($_POST['bulan'])) {
+            $bulan = $_POST['bulan'];
+            $builder->where('MONTH(realisasi.bulan)', $bulan);
+        }
+
+        if(isset($_POST['tahun']) && !empty($_POST['tahun'])) {
+            $tahun = $_POST['tahun'];
+            $builder->where('YEAR(realisasi.bulan)', $tahun);
         }
 
         // Hitung total data yang difilter
@@ -245,11 +274,11 @@ class RealisasiModel extends Model
         if ($selectedMonth === null) {
             // Mendapatkan bulan terbaru untuk busa tertentu
             $selectedMonth = $this->db->table('realisasi')
-                ->select('MAX(bulan) AS latest_month')
-                ->where('busa', $busa)
-                ->get()
-                ->getRow()
-                ->latest_month ?? null;
+            ->select('MAX(bulan) AS latest_month')
+            ->where('busa', $busa)
+            ->get()
+            ->getRow()
+            ->latest_month ?? null;
         }
 
         $previousMonth = date('Y-m-d', strtotime($selectedMonth . ' -1 month'));
@@ -257,10 +286,10 @@ class RealisasiModel extends Model
         // Mengambil data kategori dan menghitung realisasi serta optimasi
         $data = $this->db->table('categories')
             ->select('categories.id AS category_id, categories.gl_long_text AS jenis_biaya')
-            ->select('COALESCE((SELECT SUM(amount_local_curr) FROM realisasi WHERE category_id = categories.id AND busa = ' . $this->db->escape($busa) . ' AND bulan <= ' . $this->db->escape($selectedMonth) . '), 0) AS realisasi', false)
-            ->select('COALESCE((SELECT SUM(target_amount) FROM target_optimasi WHERE category_id = categories.id AND busa = ' . $this->db->escape($busa) . ' AND bulan <= ' . $this->db->escape($selectedMonth) . '), 0) AS optimasi', false)
-            ->select('COALESCE((SELECT SUM(amount_local_curr) FROM realisasi WHERE category_id = categories.id AND busa = ' . $this->db->escape($busa) . ' AND bulan <= ' . $this->db->escape($previousMonth) . '), 0) AS realisasi_prev', false)
-            ->select('COALESCE((SELECT SUM(target_amount) FROM target_optimasi WHERE category_id = categories.id AND busa = ' . $this->db->escape($busa) . ' AND bulan <= ' . $this->db->escape($previousMonth) . '), 0) AS optimasi_prev', false)
+            ->select('COALESCE((SELECT SUM(amount_local_curr) FROM realisasi WHERE category_id = categories.id AND busa = ' . $this->db->escape($busa) . ' AND bulan <= ' . $this->db->escape($selectedMonth) . ' AND YEAR(bulan) = YEAR(' . $this->db->escape($selectedMonth) . ')), 0) AS realisasi', false)
+            ->select('COALESCE((SELECT SUM(target_amount) FROM target_optimasi WHERE category_id = categories.id AND busa = ' . $this->db->escape($busa) . ' AND bulan <= ' . $this->db->escape($selectedMonth) . ' AND YEAR(bulan) = YEAR(' . $this->db->escape($selectedMonth) . ')), 0) AS optimasi', false)
+            ->select('COALESCE((SELECT SUM(amount_local_curr) FROM realisasi WHERE category_id = categories.id AND busa = ' . $this->db->escape($busa) . ' AND bulan <= ' . $this->db->escape($previousMonth) . ' AND YEAR(bulan) = YEAR(' . $this->db->escape($selectedMonth) . ')), 0) AS realisasi_prev', false)
+            ->select('COALESCE((SELECT SUM(target_amount) FROM target_optimasi WHERE category_id = categories.id AND busa = ' . $this->db->escape($busa) . ' AND bulan <= ' . $this->db->escape($previousMonth) . ' AND YEAR(bulan) = YEAR(' . $this->db->escape($selectedMonth) . ')), 0) AS optimasi_prev', false)
             ->orderBy('categories.id')
             ->get()
             ->getResultArray();

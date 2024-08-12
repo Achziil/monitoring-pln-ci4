@@ -13,6 +13,8 @@ class MonitoringModel extends Model
     // menampiklkan index.php monitorring = all untuk level admin dan wilayah sedangkan pelaksana hanya user itu sendiri
     public function getMonitoringData($busa = '7600')
     {
+        $tahun = $_POST['tahun'] ?? date('Y');
+        
         $builder = $this->db->table('categories');
         $builder->select('categories.id AS category_id, categories.gl_long_text');
         $builder->select("
@@ -31,8 +33,17 @@ class MonitoringModel extends Model
         CASE WHEN SUM(monitoring_optimasi.selisih_amount) = 0 THEN '-' ELSE SUM(monitoring_optimasi.selisih_amount) END AS total
     ");
         $builder->join('monitoring_optimasi', 'categories.id = monitoring_optimasi.category_id AND monitoring_optimasi.busa = "' . $busa . '"', 'left');
-
+        $builder->where('YEAR(monitoring_optimasi.bulan)', $tahun);
         $builder->groupBy('categories.id');
+        $query = $builder->get();
+        return $query->getResultArray();
+    }
+
+    public function getListOfYear() {
+        $builder = $this->db->table($this->table);
+        $builder->select('YEAR(bulan) as tahun');
+        $builder->groupBy('tahun');
+        $builder->orderBy('tahun', 'DESC');
         $query = $builder->get();
         return $query->getResultArray();
     }

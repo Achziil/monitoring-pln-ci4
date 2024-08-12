@@ -27,6 +27,20 @@
                                     <?php endforeach; ?>
                                 </select>
                             </div>
+
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="busa" class="form-label">Tahun</label>
+                                        <select name="tahun" id="tahunFilter" class="form-control">
+                                            <option value="" disabled selected>-- pilih tahun --</option>
+                                            <?php foreach ($listTahun as $key => $option) : ?>
+                                                <option value="<?= $option['tahun'] ?>" <?= $key == 0 ? 'selected' : '' ?>><?= $option['tahun'] ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-2 text-md-end mt-3">
                             <button id="refreshButton" class="btn btn-primary mb-3">Update Pagu Tersisa</button>
@@ -97,18 +111,26 @@
         }
 
         $('#busaFilter').on('change', function() {
-            selectedBusa = $(this).val(); // Ini sekarang memperbarui variabel global
-            fetchPaguTersisaData(selectedBusa);
+            selectedBusa = $('#busaFilter').val(); // Ini sekarang memperbarui variabel global
+            selectedTahun = $('#tahunFilter').val();
+            fetchPaguTersisaData(selectedBusa, selectedTahun);
+        });
+
+        $('#tahunFilter').on('change', function() {
+            selectedBusa = $('#busaFilter').val(); // Ini sekarang memperbarui variabel global
+            selectedTahun = $('#tahunFilter').val();
+            fetchPaguTersisaData(selectedBusa, selectedTahun);
         });
 
 
         // Fungsi untuk mengambil data pagu tersisa dan menampilkannya pada tabel
-        function fetchPaguTersisaData(busa) {
+        function fetchPaguTersisaData(busa, tahun) {
             $.ajax({
                 url: getDataWithPercentageUrl,
                 method: 'POST',
                 data: {
-                    busa: busa
+                    busa: busa,
+                    tahun: tahun
                 },
                 success: function(response) {
                     if ($.fn.DataTable.isDataTable('#paguTersisaTable')) {
@@ -173,7 +195,7 @@
             });
         }
         // Memanggil fungsi fetchPaguTersisaData saat halaman dimuat
-        fetchPaguTersisaData();
+        fetchPaguTersisaData(undefined, new Date().getFullYear());
 
         // Fungsi untuk melakukan refresh data pagu tersisa
         function refreshPaguTersisaData() {

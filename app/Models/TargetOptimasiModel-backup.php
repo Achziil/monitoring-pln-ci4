@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class TargetOptimasiModel extends Model
+class TargetOptimasiModelBackup extends Model
 {
     protected $table = 'target_optimasi';
     protected $primaryKey = 'id';

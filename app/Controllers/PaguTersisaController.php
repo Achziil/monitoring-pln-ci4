@@ -2,8 +2,8 @@
 
 namespace App\Controllers;
 
-use App\Models\UserModel;
 use CodeIgniter\Controller;
+use App\Models\UserModel;
 use App\Models\PaguTersisaModel;
 
 class PaguTersisaController extends Controller
@@ -36,6 +36,7 @@ class PaguTersisaController extends Controller
             'busa' => $busa,
             'level' => $level,
             'busaList' => $busaList,
+            'listTahun' => $this->paguTersisaModel->getListOfYear(),
         ];
 
         return view('pagutersisa/index', $data);

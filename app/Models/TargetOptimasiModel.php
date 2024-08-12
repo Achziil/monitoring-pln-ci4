@@ -46,6 +46,16 @@ class TargetOptimasiModel extends Model
             $builder->where('target_optimasi.busa', $_POST['busaFilter']);
         }
 
+        if(isset($_POST['bulan']) && !empty($_POST['bulan'])) {
+            $bulan = $_POST['bulan'];
+            $builder->where('MONTH(target_optimasi.bulan)', $bulan);
+        }
+
+        if(isset($_POST['tahun']) && !empty($_POST['tahun'])) {
+            $tahun = $_POST['tahun'];
+            $builder->where('YEAR(target_optimasi.bulan)', $tahun);
+        }
+
         // Urutkan data berdasarkan kolom yang dipilih dari datatable
         if (isset($_POST['order'])) {
             $order = $_POST['order'][0]['column'];
@@ -59,6 +69,16 @@ class TargetOptimasiModel extends Model
         return $query->getResult();
     }
 
+    public function getListOfYear() {
+        $builder = $this->db->table($this->table)
+            ->select('YEAR(bulan) as tahun')
+            ->groupBy('YEAR(bulan)')
+            ->orderBy('YEAR(bulan)', 'DESC');
+
+        $query = $builder->get();
+        return $query->getResult();
+    }
+
     public function countFiltered($busa = null)
     {
         // Inisialisasi query builder untuk menghitung total data yang difilter
@@ -67,7 +87,7 @@ class TargetOptimasiModel extends Model
             ->join('categories', 'target_optimasi.category_id = categories.id');
 
         // Filter data berdasarkan busa jika tidak 'All' dan tidak null
-        if ($busa !== '7600' && $busa !== null) {
+        if ($busa !== '' && $busa !== null) {
             $builder->where('target_optimasi.busa', $busa);
         }
 
@@ -83,8 +103,18 @@ class TargetOptimasiModel extends Model
         }
 
         // Filter data berdasarkan filter busa dari datatable
-        if (isset($_POST['busa']) && $_POST['busa'] != '7600') {
-            $builder->where('target_optimasi.busa', $_POST['busa']);
+        if (isset($_POST['busaFilter']) && $_POST['busaFilter'] != '7600') {
+            $builder->where('target_optimasi.busa', $_POST['busaFilter']);
+        }
+
+        if(isset($_POST['bulan']) && !empty($_POST['bulan'])) {
+            $bulan = $_POST['bulan'];
+            $builder->where('MONTH(target_optimasi.bulan)', $bulan);
+        }
+
+        if(isset($_POST['tahun']) && !empty($_POST['tahun'])) {
+            $tahun = $_POST['tahun'];
+            $builder->where('YEAR(target_optimasi.bulan)', $tahun);
         }
 
         // Hitung total data yang difilter

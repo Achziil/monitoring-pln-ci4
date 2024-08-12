@@ -3,9 +3,9 @@
 namespace App\Controllers;
 
 use CodeIgniter\Controller;
+use App\Models\UserModel;
 use App\Models\TargetOptimasiModel;
 use App\Models\CategoryModel;
-use App\Models\UserModel;
 
 class TargetOptimasiController extends Controller
 {
@@ -47,6 +47,7 @@ class TargetOptimasiController extends Controller
             ),
             'categories' => $this->categoryModel->findAll(),
             'busaOptions' => $busaWithNickname,
+            'listTahun' => $this->targetOptimasiModel->getListOfYear(),
             'userLevel' => $level,
         ];
 

@@ -2,9 +2,9 @@
 
 namespace App\Controllers;
 
-use App\Models\MonitoringModel;
-use App\Models\UserModel;
 use CodeIgniter\Controller;
+use App\Models\UserModel;
+use App\Models\MonitoringModel;
 
 class MonitoringController extends Controller
 {
@@ -41,6 +41,7 @@ class MonitoringController extends Controller
             'busa' => $busa,
             'level' => $level,
             'busaList' => $busaList,
+            'listTahun' => $this->monitoringModel->getListOfYear(),
         ];
 
         return view('monitoring/index', $data);

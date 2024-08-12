@@ -11,6 +11,7 @@ class PaguTersisaModel extends Model
 
     public function getPaguTersisaData($busa = '7600')
     {
+        $tahun = $_POST['tahun'] ?? date('Y');
         // Menginisialisasi query builder untuk tabel 'categories'
         $builder = $this->db->table('categories');
         // Memilih kolom-kolom yang diperlukan dari tabel 'categories'
@@ -44,9 +45,19 @@ class PaguTersisaModel extends Model
         ");
         // Melakukan join dengan tabel 'pagu_tersisa' berdasarkan category_id dan busa
         $builder->join('pagu_tersisa', 'categories.id = pagu_tersisa.category_id AND pagu_tersisa.busa = "' . $busa . '"', 'left');
+        $builder->where('YEAR(pagu_tersisa.bulan)', $tahun);
         // Mengelompokkan data berdasarkan kategori
         $builder->groupBy('categories.id');
         // Menjalankan query dan mendapatkan hasilnya
+        $query = $builder->get();
+        return $query->getResultArray();
+    }
+
+    public function getListOfYear() {
+        $builder = $this->db->table('pagu_tersisa');
+        $builder->select('YEAR(bulan) as tahun');
+        $builder->groupBy('tahun');
+        $builder->orderBy('tahun', 'DESC');
         $query = $builder->get();
         return $query->getResultArray();
     }
@@ -137,7 +148,8 @@ class PaguTersisaModel extends Model
             //     'last_refresh_date' => date('Y-m-d H:i:s')
             // ]);
         }
-        $this->db->table($this->table)->insertBatch($insertMonitoringData);
+
+        if(!empty($insertMonitoringData)) $this->db->table($this->table)->insertBatch($insertMonitoringData);
     }
 
     public function getLastRefreshDate()

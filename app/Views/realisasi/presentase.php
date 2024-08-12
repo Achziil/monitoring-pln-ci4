@@ -27,11 +27,25 @@
                                         <?php endforeach; ?>
                                     </select>
                                 <?php endif; ?>
+                                <label for="yearFilter" class="form-label">Filter Tahun</label>
+                                <select id="yearFilter" class="form-control">
+                                    <?php foreach ($monthsByYear as $key => $year) : ?>
+                                        <option value="<?= $key ?>" <?= Date('Y', strtotime($selectedMonth)) == $key ? 'selected' : '' ?>>
+                                            <?= $key ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+
+                                <?php 
+                                    $selectMonth = Date('Y', strtotime($selectedMonth));
+                                    $months = $monthsByYear[$selectMonth];
+                                ?>
+
                                 <label for="monthFilter" class="form-label">Filter Bulan</label>
                                 <select id="monthFilter" class="form-control">
                                     <?php foreach ($months as $month) : ?>
-                                        <option value="<?= $month['bulan'] ?>" <?= $selectedMonth === $month['bulan'] ? 'selected' : '' ?>>
-                                            <?= date('F Y', strtotime($month['bulan'])) ?>
+                                        <option value="<?= $month ?>" <?= $selectedMonth === $month ? 'selected' : '' ?>>
+                                            <?= date('F', strtotime($month)) ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -106,9 +120,22 @@
         var baseUrl = '<?= site_url() ?>';
         var selectBusaUrl = `${baseUrl}${role}/presentase/realisasi/`;
 
-        $('#busaFilter, #monthFilter').on('change', function() {
+        const listMonthByYear = <?= json_encode($monthsByYear) ?>;
+
+        $('#busaFilter, #monthFilter, #yearFilter').on('change', function() {
             var selectedBusa = $('#busaFilter').val();
             var selectedMonth = $('#monthFilter').val();
+            var selectedYear = $('#yearFilter').val();
+
+            // replace year in selectedMonth to selectedYear
+            selectedMonth = selectedMonth.replace(selectedMonth.substring(0, 4), selectedYear);
+            
+            // get list of month based on selected year
+            var months = listMonthByYear[selectedYear];
+
+            // replace month in selectedMonth to selectedYear
+            selectedMonth = months.includes(selectedMonth) ? selectedMonth : months[0];
+            
             window.location.href = `${selectBusaUrl}${selectedBusa}/${selectedMonth}`;
         });
     });

@@ -27,6 +27,20 @@
                                     <?php endforeach; ?>
                                 </select>
                             </div>
+
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="busa" class="form-label">Tahun</label>
+                                        <select name="tahun" id="tahunFilter" class="form-control">
+                                            <option value="" disabled selected>-- pilih tahun --</option>
+                                            <?php foreach ($listTahun as $key => $option) : ?>
+                                                <option value="<?= $option['tahun'] ?>" <?= $key == 0 ? 'selected' : '' ?>><?= $option['tahun'] ?></option>
+                                                <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-2 text-md-end mt-3">
                             <button id="refreshButton" class="btn btn-primary mb-3">Update Monitoring</button>
@@ -93,8 +107,8 @@
             return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
-        $('#busaFilter').on('change', function() {
-            selectedBusa = $(this).val();
+        $('#busaFilter, #tahunFilter').on('change', function() {
+            selectedBusa = $('#busaFilter').val();
             fetchMonitoringData(selectedBusa);
         });
 
@@ -103,7 +117,8 @@
                 url: getData,
                 method: 'POST',
                 data: {
-                    busa: selectedBusa
+                    busa: selectedBusa,
+                    tahun: $('#tahunFilter').val()
                 },
                 success: function(response) {
                     if ($.fn.DataTable.isDataTable('#monitoringTable')) {
