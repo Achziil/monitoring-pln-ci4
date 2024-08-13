@@ -282,7 +282,6 @@ class RealisasiModel extends Model
         }
 
         $previousMonth = date('Y-m-d', strtotime($selectedMonth . ' -1 month'));
-
         // Mengambil data kategori dan menghitung realisasi serta optimasi
         $data = $this->db->table('categories')
             ->select('categories.id AS category_id, categories.gl_long_text AS jenis_biaya')

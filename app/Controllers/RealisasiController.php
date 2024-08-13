@@ -196,7 +196,7 @@ class RealisasiController extends Controller
         }
 
         if ($selectedMonth === null) {
-            $selectedMonth = isset($months[0]['bulan']) ? $months[0]['bulan'] : date('Y-m');
+            $selectedMonth = isset($months[0]['bulan']) ? $months[0]['bulan'] : date('Y-m') . '-01';
         }
 
         $realisasiData = $this->realisasiModel->getRealisasiPercentage($busa, $selectedMonth);

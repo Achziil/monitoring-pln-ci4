@@ -29,6 +29,7 @@
                                 <?php endif; ?>
                                 <label for="yearFilter" class="form-label">Filter Tahun</label>
                                 <select id="yearFilter" class="form-control">
+                                    <option value="" selected disabled>-- Pilih Tahun --</option>
                                     <?php foreach ($monthsByYear as $key => $year) : ?>
                                         <option value="<?= $key ?>" <?= Date('Y', strtotime($selectedMonth)) == $key ? 'selected' : '' ?>>
                                             <?= $key ?>
@@ -38,11 +39,12 @@
 
                                 <?php 
                                     $selectMonth = Date('Y', strtotime($selectedMonth));
-                                    $months = $monthsByYear[$selectMonth];
+                                    $months = $monthsByYear[$selectMonth] ?? [];
                                 ?>
 
                                 <label for="monthFilter" class="form-label">Filter Bulan</label>
                                 <select id="monthFilter" class="form-control">
+                                    <option value="" selected disabled>-- Pilih Bulan --</option>
                                     <?php foreach ($months as $month) : ?>
                                         <option value="<?= $month ?>" <?= $selectedMonth === $month ? 'selected' : '' ?>>
                                             <?= date('F', strtotime($month)) ?>
