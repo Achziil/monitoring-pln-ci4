@@ -69,7 +69,7 @@ class RealisasiModel extends Model
     }
 
     public function getListOfYear() {
-        $builder = $this->db->table($this->table)
+        $builder = $this->db->table('target_optimasi')
             ->select('YEAR(bulan) AS tahun', false)
             ->groupBy('YEAR(bulan)')
             ->orderBy('tahun', 'DESC');
@@ -262,7 +262,7 @@ class RealisasiModel extends Model
     // REALISASI MENU PRESENTASE
     public function getAvailableMonths($busa = '7600')
     {
-        $builder = $this->db->table($this->table)
+        $builder = $this->db->table('target_optimasi')
             ->select('DISTINCT(bulan)', false)
             ->where('busa', $busa)
             ->orderBy('bulan', 'DESC');

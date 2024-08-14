@@ -54,7 +54,7 @@ class PaguTersisaModel extends Model
     }
 
     public function getListOfYear() {
-        $builder = $this->db->table('pagu_tersisa');
+        $builder = $this->db->table('target_optimasi');
         $builder->select('YEAR(bulan) as tahun');
         $builder->groupBy('tahun');
         $builder->orderBy('tahun', 'DESC');
